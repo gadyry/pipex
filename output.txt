@@ -1,0 +1,9 @@
+README.md
+USER=ael-gady
+a.out
+file
+file.c
+file2
+input.txt
+output.txt
+hi
