@@ -1,26 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_arg.c                                        :+:      :+:    :+:   */
+/*   lib_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/28 09:16:12 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/01/28 10:09:08 by ael-gady         ###   ########.fr       */
+/*   Created: 2025/01/28 11:55:29 by ael-gady          #+#    #+#             */
+/*   Updated: 2025/01/28 11:58:53 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	parse_arg(char **av, int ac, t_pipex *pipex)
+int	ft_strlen(const char *s)
 {
-	if (ac != 5)
+	int	len;
+
+	len = 0;
+	while (s[len] != '\0')
+		len++;
+	return (len);
+}
+
+char	*ft_strdup(const char *s)
+{
+	int		i;
+	char	*str;
+	int		len;
+
+	i = 0;
+	len = ft_strlen(s);
+	str = (char *)malloc(len + 1);
+	if (!str)
+		return (NULL);
+	while (s[i])
 	{
-		write(2, "Usage: ./pipex <infile> <cmd1> <cmd2> <outfile>\n", 48);
-		exit(1);
+		str[i] = s[i];
+		i++;
 	}
-	pipex->infile = av[1];
-	pipex->outfile = av[4];
-	pipex->cmd1 = ft_split(av[2], ' ');//parse the cmd "tr ' ' '\n' !!!"
-	pipex->cmd2 = ft_split(av[3], ' ');
+	str[i] = '\0';
+	return (str);
 }
