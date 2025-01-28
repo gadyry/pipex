@@ -4,7 +4,7 @@ int main(int ac, char **av, char **env)
 {
 	int pid;
 	char *arg[2];
-	int fds[2];// --> fd[0] : read &&  fd[1] : write 
+	int fds[2];// --> fd[0] : read &&  fd[1] : write
 
 	pipe(fds);
 	pid = fork();
@@ -30,10 +30,12 @@ int main(int ac, char **av, char **env)
 }
 
 /*
+
 	fork();
 	execve();
 	dup2
 	dup
 	pipe
 	ls > file
+
 */

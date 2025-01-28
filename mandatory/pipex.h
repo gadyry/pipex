@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 08:56:57 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/01/28 10:22:14 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/01/28 16:31:18 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,14 @@ typedef struct s_pipex
 	char	*outfile;
 	char	**cmd1;
 	char	**cmd2;
-} t_pipex;
+}			t_pipex;
+
+typedef struct s_fd
+{
+	int	input_fd;
+	int	output_fd;
+	int	pipe_fd[2];
+}		t_fd;
 
 void	parse_arg(char **av, int ac, t_pipex *pipex);
 char	**ft_split(char const *s, char c);
