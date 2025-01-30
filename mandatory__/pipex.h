@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 08:56:57 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/01/30 03:32:36 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/01/29 10:53:38 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,18 @@ typedef struct s_pipex
 	char	*outfile;
 	char	**cmd1;
 	char	**cmd2;
-    int     pipe_fd[2];
 }			t_pipex;
 
-// typedef struct s_fd
-// {
-// 	int	input_fd;
-// 	int	output_fd;
-// 	int	pipe_fd[2];
-// }		t_fd;
+typedef struct s_fd
+{
+	int	input_fd;
+	int	output_fd;
+	int	pipe_fd[2];
+}		t_fd;
 
-/*    libft utils :  */
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_strdup(const char *s);
-int		ft_strlen(const char *s);
+void	parse_arg(char **av, int ac, t_pipex *pipex);
 char	**ft_split(char const *s, char c);
-/* conception functions */
-void	ft_error(const char *msg);
-void	execute(char *cmd, char **envp, t_pipex *p);
-char	*get_cmd_path(char **cmd_args, char **envp);
-int		open_file(char *av, int key);
-void	free_matrice(char **str);
+char	*find_cmd_path(char **cmd, char **envp);
+void	execute_pipex(t_pipex *pipex, char **av, char **envp);
+
 #endif
