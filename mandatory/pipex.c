@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 18:45:53 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/01/30 04:26:04 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/01 17:12:09 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,20 @@ void	execute(char *cmd_, char **envp, t_pipex *p)
 	}
 }
 
-void	the_dutiful_child(char **av, char **envp, t_pipex *p)
+void	handle_stdin_input(t_pipex *p, char **av, char **envp)
+{
+	if (dup2(p->pipe_fd[1], STDOUT_FILENO) == -1)
+	{
+		close(p->pipe_fd[0]);
+		close(p->pipe_fd[1]);
+		ft_error("Error: Failed to redirect stdout");
+	}
+	close(p->pipe_fd[0]);
+	close(p->pipe_fd[1]);
+	execute(av[3], envp, p);
+}
+
+void	handle_file_input(t_pipex *p, char **av, char **envp)
 {
 	int	input_fd;
 
@@ -66,19 +79,27 @@ void	the_dutiful_child(char **av, char **envp, t_pipex *p)
 	execute(av[2], envp, p);
 }
 
+void	the_dutiful_child(char **av, char **envp, t_pipex *p)
+{
+	// if (ft_strncmp(av[1], "/dev/stdin", 10) == 0)
+	// 	handle_stdin_input(p, av, envp);
+	// else
+	handle_file_input(p, av, envp);
+}
+
 void	al_maari(char **av, char **envp, t_pipex *p)
 {
 	int	output_fd;
 
 	output_fd = open_file(av[4], 0);
-	if (dup2(p->pipe_fd[0], STDOUT_FILENO) == -1)
+	if ( dup2(p->pipe_fd[0], STDIN_FILENO) == -1)
 	{
 		close(output_fd);
 		close(p->pipe_fd[0]);
 		close(p->pipe_fd[1]);
 		ft_error("Error: Failed to redirect stdout");
 	}
-	if (dup2(output_fd, STDIN_FILENO) == -1)
+	if (dup2(output_fd, STDOUT_FILENO) == -1)
 	{
 		close(output_fd);
 		close(p->pipe_fd[0]);
@@ -88,6 +109,7 @@ void	al_maari(char **av, char **envp, t_pipex *p)
 	close(output_fd);
 	close(p->pipe_fd[0]);
 	close(p->pipe_fd[1]);
+	sleep(1000);
 	execute(av[3], envp, p);
 }
 
@@ -100,12 +122,19 @@ void	check_arg(int ac)
 	}
 }
 
+void	f()
+{
+	system("leaks  pipex");
+}
+#include "libc.h"
+
 int	main(int ac, char **av, char **envp)
 {
 	pid_t	pid;
 	t_pipex	pipex;
 	int		status;
 
+	atexit(f);
 	check_arg(ac);
 	if (pipe(pipex.pipe_fd) == -1)
 		ft_error("pipe failed");
