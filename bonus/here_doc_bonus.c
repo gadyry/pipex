@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:37:14 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:01:50 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 11:59:46 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,6 @@ void	create_pipes_and_execute(t_process *proc)
 	int			i;
 	int			pipe_fd[2];
 
-	if (proc->here_doc)
-		proc->prev_pipe_fd = pipe_fd[0];
-	else
-		open_infile(proc->av[1], &proc->prev_pipe_fd);
 	i = 2 + proc->here_doc;
 	while (i < proc->ac - 1)
 	{

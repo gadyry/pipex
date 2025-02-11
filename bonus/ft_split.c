@@ -6,11 +6,11 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 09:52:24 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:32:00 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 11:48:52 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 static size_t	count_words(const char *s, char c)
 {
@@ -123,4 +123,3 @@ char	**ft_split(const char *s, char c)
 	strs[i] = NULL;
 	return (strs);
 }
-
