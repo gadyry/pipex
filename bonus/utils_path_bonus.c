@@ -1,71 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_path.c                                       :+:      :+:    :+:   */
+/*   utils_path_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/29 23:40:28 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/10 11:16:55 by ael-gady         ###   ########.fr       */
+/*   Created: 2025/02/08 14:51:37 by ael-gady          #+#    #+#             */
+/*   Updated: 2025/02/10 21:10:15 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-void	free_matrice(char **str)
+void	free_matrice(char **free_me)
 {
 	int	i;
 
-	if (!str)
-		return ;
-	i = 0;
-	while (str[i])
-		free(str[i++]);
-	free(str);
-}
-
-int	open_file(char *av, int key)
-{
-	int	fd;
-
-	if (key)
-	{
-		fd = open(av, O_RDONLY);
-		if (fd == -1)
-		{
-			perror("Error opening infile");
-			exit(1);
-		}
-	}
-	else
-	{
-		fd = open(av, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd == -1)
-		{
-			perror("Error opening outfile");
-			exit(1);
-		}
-	}
-	return (fd);
+	i = -1;
+	while (free_me[++i])
+		free(free_me[i]);
+	free(free_me);
 }
 
 char	*get_env(char **envp)
 {
-	char	*env;
-	int		i;
+	int	i;
 
-	if (!envp)
-		return (NULL);
 	i = 0;
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "PATH=", 5))
-		{
-			env = ft_strdup(envp[i] + 5);
-			if (!env)
-				ft_error("ft_strdup failed");
-			return (env);
-		}
+			return (ft_strdup(envp[i] + 5));
 		i++;
 	}
 	return (NULL);
@@ -98,12 +63,14 @@ char	*get_full_path(char **paths, char **cmd_args)
 
 char	*get_cmd_path(char **cmd_args, char **envp)
 {
+	char	*pathname;
 	char	*path_env;
-	char	*full_path;
 	char	**paths;
 
 	if (!cmd_args || !cmd_args[0])
 		return (NULL);
+	if (!ft_strncmp(cmd_args[0], "./", 2) || !ft_strncmp(cmd_args[0], "/", 1))
+		return (cmd_args[0]);
 	path_env = get_env(envp);
 	if (!path_env)
 		return (NULL);
@@ -111,6 +78,31 @@ char	*get_cmd_path(char **cmd_args, char **envp)
 	free(path_env);
 	if (!paths)
 		return (NULL);
-	full_path = get_full_path(paths, cmd_args);
-	return (full_path);
+	pathname = get_full_path(cmd_args, paths);
+	free(paths);
+	return (pathname);
+}
+
+void	execute_cmd(char *cmd_, char **envp)//execute_cmd(proc->av[indice], proc->envp);
+{
+	char	*pathname;
+	char	**cmd_args;
+
+	cmd_args = ft_split(cmd_, ' ');// handle tr ' ' '\n'!
+	if (!cmd_args)
+		ft_error("ft_split failed");
+	pathname = get_cmd_path(cmd_args, envp);// /bin/ls ...
+	if (!pathname)
+	{
+		free_matrice(cmd_args);
+		ft_error("Command not found");
+	}
+	if (execve(pathname, cmd_args, envp) == -1)
+	{
+		perror("execve");
+		if (pathname != cmd_args[0])
+			free(pathname);
+		free_matrice(cmd_args);
+		exit(1);
+	}
 }

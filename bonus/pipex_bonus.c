@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:11:15 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/07 03:45:16 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 10:34:28 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	ft_error_dup2(const char *msg, int *pipe_fd, int prev_pipe_fd)
 	perror(msg);
 	exit(1);
 }
+
 int	main(int ac, char **av, char **envp)
 {
 	int	here_doc;
@@ -39,20 +40,6 @@ int	main(int ac, char **av, char **envp)
 		write(2, "Usage: ./pipex <infile> <cmd_1> ...  <cmd_n> <outfile>\n", 55);
 		exit(1);
 	}
-	here_doc = (!ft_strncmp(av[1], "her_doc", 8));
-	if (here_doc)
-	{
-		pipe(pipe_fd);
-		pid = fork();
-		if (pid == -1)
-			ft_error("failed fork");
-		if (pid == 0)
-		{
-			handle_here_doc(av[2], pipe_fd);//todo
-			exit(0);
-		}
-		close(pipe_fd[1]);
-	}
-	create_pipes_and_execute(ac, av, envp, here_doc);//todo
+	handle_here_doc_and_pipes(ac, av, envp);
 	return (0);
 }

@@ -6,11 +6,11 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:37:14 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/07 04:55:54 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 11:01:50 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	handle_here_doc(char *limiter, int *pipe_fd)
 {
@@ -44,7 +44,7 @@ int	redirect_to_outfile(char *outfile, int here_doc)
 	close(out_fd);
 }
 
-void	child_mission(int *pipe_fd, int prev_pipe_fd, int indice, int ac, char *av, int here_doc, char **envp)
+void	child_mission(int *pipe_fd, int indice, t_process *proc)
 {
 	pid_t	pid;
 
@@ -53,37 +53,42 @@ void	child_mission(int *pipe_fd, int prev_pipe_fd, int indice, int ac, char *av,
 		ft_error("fork failed");
 	if (!pid)
 	{
-		if (dup2(prev_pipe_fd, 0) == -1)// void	ft_error_dup2(const char *msg, int *pipe_fd, int prev_pipe_fd)
-			ft_error_dup2("dup2 input failed", pipe_fd, prev_pipe_fd);
-		if (indice < ac - 2)
-		{
-			if (dup2(pipe_fd[1], 1) == -1)
-				ft_error_dup2("dup2 input failed", pipe_fd, prev_pipe_fd);
-		}
+		close(pipe_fd[0]);
+		if (dup2(proc->prev_pipe_fd, 0) == -1)
+			ft_error_dup2("dup2 input failed", pipe_fd, proc->prev_pipe_fd);
+		if (indice < proc->ac - 2 && (dup2(pipe_fd[1], 1) == -1))
+				ft_error_dup2("dup2 input failed", pipe_fd, proc->prev_pipe_fd);
 		else
-			redirect_to_outfile(av[ac - 1], here_doc);
+			redirect_to_outfile(proc->av[proc->ac - 1], proc->here_doc);
 		close(pipe_fd[1]);
-		execute_cmd(av[indice], envp);//todo
+		close(proc->prev_pipe_fd);
+		execute_cmd(proc->av[indice], proc->envp);
+	}
+	else
+	{
+		close(pipe_fd[1]);
+		close(proc->prev_pipe_fd);
+		wait_pid(pid, NULL, 0);
 	}
 }
 
-void	create_pipes_and_execute(int ac, char **av, char **envp, int here_doc)
+void	create_pipes_and_execute(t_process *proc)
 {
-	int		i;
-	int		pipe_fd[2];
-	int		prev_pipe_fd;
+	int			i;
+	int			pipe_fd[2];
 
-	prev_pipe_fd = 0;
-	if (here_doc)
-		prev_pipe_fd = pipe_fd[0];
-	i = 2 + here_doc;
-	while (i < ac - 1)
+	if (proc->here_doc)
+		proc->prev_pipe_fd = pipe_fd[0];
+	else
+		open_infile(proc->av[1], &proc->prev_pipe_fd);
+	i = 2 + proc->here_doc;
+	while (i < proc->ac - 1)
 	{
 		if (pipe(pipe_fd) == -1)
 			ft_error("failed pipe");
-		child_mission(pipe_fd, prev_pipe_fd, i, ac, av, here_doc, envp);
-		close(prev_pipe_fd);
-		prev_pipe_fd = pipe_fd[0];
+		child_mission(pipe_fd, i, proc);
+		close(proc->prev_pipe_fd);
+		proc->prev_pipe_fd = pipe_fd[0];
 		i++;
 	}
 	while (wait(NULL) > 0);
