@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:45:52 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:09:07 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 11:33:25 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ char	*ft_strjoin(char *s1, char *s2);
 char	*pass_next_line(char **line);
 char	*pass_current_line(char **src_ln);
 char	*get_next_line(int fd);
-
 char	*ft_strdup(const char *s);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_strlen(const char *s);
