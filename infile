@@ -1,0 +1,6 @@
+Since you're working on the bonus part of pipex, 
+I assume your implementation includes handling multiple
+pipes (cmd1 | cmd2 | cmd3 ...), here_doc mode, and input/output 
+redirection. Here are some tests to verify your 
+implementation:
+

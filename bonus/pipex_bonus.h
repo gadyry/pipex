@@ -6,20 +6,20 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:45:52 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:33:25 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/12 15:41:19 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define	PIPEX_H
-
-#include <libc.h>//for building
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include <unistd.h>//for write, execve, read,
 # include <stdlib.h>//malloc
 # include <sys/wait.h>//wait
 # include <fcntl.h>//for system call open,
-# include <sys/_types.h>//pid_t
+# include <sys/types.h>//pid_t
+
+# include <libc.h>//for debugging !
 
 #  define BUFFER_SIZE 69
 
@@ -36,15 +36,14 @@ typedef struct s_process
 
 /*  get_next_line  && utils */
 int		check_retline(char *line);
-char	*ft_strjoin(char *s1, char *s2);
-char	*pass_next_line(char **line);
-char	*pass_current_line(char **src_ln);
+char	*ft_strjoin_get_next(char *s1, char *s2);
 char	*get_next_line(int fd);
-char	*ft_strdup(const char *s);
+char	**ft_split(const char *s, char c);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 int		ft_strlen(const char *s);
-char	*ft_strjoin_get_next(char const *s1, char const *s2);
-
+char	*ft_strjoin(char const *s1, char const *s2);
+/* pipex functions */
+char	*ft_strdup(const char *s);
 void	ft_error(const char *msg);
 void	ft_error_dup2(const char *msg, int *pipe_fd, int prev_pipe_fd);
 void	handle_here_doc(char *limiter, int *pipe_fd);

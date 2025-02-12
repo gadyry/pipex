@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:37:14 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:59:46 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:43:28 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,17 @@ void	handle_here_doc(char *limiter, int *pipe_fd)
 {
 	char	*line;
 
-	close(pipe_fd[0]);
 	while (1)
 	{
+		write(1, "heredoc", 9);
 		line = get_next_line(0);
-		if (!line || !ft_strncmp(line, limiter, ft_strlen(limiter)))
+		if (!line)
 			break;
+		if (!ft_strncmp(line, limiter, ft_strlen(limiter)) && line[ft_strlen(limiter)] == '\n')
+		{
+			free(line);
+			break;
+		}
 		write(pipe_fd[1], line, ft_strlen(line));
 		free(line);
 	}
@@ -29,7 +34,7 @@ void	handle_here_doc(char *limiter, int *pipe_fd)
 	close(pipe_fd[1]);
 }
 
-int	redirect_to_outfile(char *outfile, int here_doc)
+void	redirect_to_outfile(char *outfile, int here_doc)
 {
 	int	out_fd;
 
@@ -48,14 +53,17 @@ void	child_mission(int *pipe_fd, int indice, t_process *proc)
 {
 	pid_t	pid;
 
+	fprintf(stderr, "Before forking: pipe_fd[0] = %d, pipe_fd[1] = %d\n", pipe_fd[0], pipe_fd[1]);
 	pid = fork();
 	if (pid == -1)
 		ft_error("fork failed");
 	if (!pid)
 	{
+		fprintf(stderr, "Child process started\n");
 		close(pipe_fd[0]);
 		if (dup2(proc->prev_pipe_fd, 0) == -1)
 			ft_error_dup2("dup2 input failed", pipe_fd, proc->prev_pipe_fd);
+		close(pipe_fd[0]);
 		if (indice < proc->ac - 2 && (dup2(pipe_fd[1], 1) == -1))
 				ft_error_dup2("dup2 input failed", pipe_fd, proc->prev_pipe_fd);
 		else
@@ -67,8 +75,9 @@ void	child_mission(int *pipe_fd, int indice, t_process *proc)
 	else
 	{
 		close(pipe_fd[1]);
-		close(proc->prev_pipe_fd);
-		wait_pid(pid, NULL, 0);
+		if (proc->prev_pipe_fd != -1)
+			close(proc->prev_pipe_fd);
+		waitpid(pid, NULL, 0);
 	}
 }
 

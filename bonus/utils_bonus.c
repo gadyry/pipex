@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 03:14:20 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:33:43 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:18:05 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,10 @@ char	*ft_strdup(const char *s)
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	size_t	i;
+	int		i;
 	char	*str;
-	size_t	len;
-	size_t	j;
+	int		len;
+	int		j;
 
 	if (!s1 || !s2)
 		return (NULL);

@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:11:15 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 10:34:28 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:36:44 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,31 @@ void	ft_error_dup2(const char *msg, int *pipe_fd, int prev_pipe_fd)
 	exit(1);
 }
 
+// void ft_error_dup2(const char *msg, int *pipe_fd, int prev_pipe_fd)
+// {
+//     // Print the error message
+//     perror(msg);
+
+//     // Close file descriptors only if they are valid
+//     if (prev_pipe_fd != -1) {
+//         close(prev_pipe_fd);
+//         fprintf(stderr, "Closed prev_pipe_fd: %d\n", prev_pipe_fd);  // Debugging info
+//     }
+//     if (pipe_fd[0] != -1) {
+//         close(pipe_fd[0]);
+//         fprintf(stderr, "Closed pipe_fd[0]: %d\n", pipe_fd[0]);  // Debugging info
+//     }
+//     if (pipe_fd[1] != -1) {
+//         close(pipe_fd[1]);
+//         fprintf(stderr, "Closed pipe_fd[1]: %d\n", pipe_fd[1]);  // Debugging info
+//     }
+
+//     // Exit the program
+//     exit(1);
+// }
+
 int	main(int ac, char **av, char **envp)
 {
-	int	here_doc;
-	int	pipe_fd[2];
-	int	pid;
-
 	if (ac < 5 || (ft_strncmp(av[1], "here_doc", 8) == 0 && ac < 6))
 	{
 		write(2, "Usage: ./pipex here_doc LIMITER cmd1 cmd2 ... cmdn outfile\n", 60);

@@ -1,26 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 11:05:22 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/11 11:05:45 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/11 14:54:00 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-
-size_t	ft_strlen(const char *str)
-{
-	size_t	cpt;
-
-	cpt = 0;
-	while (str && str[cpt])
-		cpt++;
-	return (cpt);
-}
 
 int	check_retline(char *line)
 {
@@ -38,32 +28,10 @@ int	check_retline(char *line)
 	return (0);
 }
 
-static char	*ft_strdup(char *s)
-{
-	int		i;
-	char	*str;
-	int		len;
-
-	i = 0;
-	if (!s)
-		return (NULL);
-	len = ft_strlen(s);
-	str = (char *)malloc(len + 1);
-	if (!str)
-		return (NULL);
-	while (s[i])
-	{
-		str[i] = s[i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
-}
-
 static void	copy_strings(char *dest, char *s1, char *s2)
 {
-	size_t	i;
-	size_t	j;
+	int	i;
+	int	j;
 
 	i = 0;
 	j = 0;
@@ -80,10 +48,10 @@ static void	copy_strings(char *dest, char *s1, char *s2)
 	dest[i + j] = '\0';
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin_get_next(char *s1, char *s2)
 {
 	char	*str;
-	size_t	len;
+	int		len;
 
 	if (!s1 && !s2)
 		return (NULL);
