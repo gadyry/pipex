@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 10:37:14 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/12 16:43:28 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/12 17:00:44 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,18 @@ void	child_mission(int *pipe_fd, int indice, t_process *proc)
 	{
 		fprintf(stderr, "Child process started\n");
 		close(pipe_fd[0]);
-		if (dup2(proc->prev_pipe_fd, 0) == -1)
+		if (dup2(pipe_fd[1], 1) == -1)
+		{
+			fprintf(stderr, "Child process prev_pipe_fd: %d\n", proc->prev_pipe_fd);
+			sleep(100);
 			ft_error_dup2("dup2 input failed", pipe_fd, proc->prev_pipe_fd);
-		close(pipe_fd[0]);
+		}
 		if (indice < proc->ac - 2 && (dup2(pipe_fd[1], 1) == -1))
 				ft_error_dup2("dup2 input failed", pipe_fd, proc->prev_pipe_fd);
 		else
 			redirect_to_outfile(proc->av[proc->ac - 1], proc->here_doc);
 		close(pipe_fd[1]);
-		close(proc->prev_pipe_fd);
+		// close(proc->prev_pipe_fd);
 		execute_cmd(proc->av[indice], proc->envp);
 	}
 	else
@@ -77,6 +80,9 @@ void	child_mission(int *pipe_fd, int indice, t_process *proc)
 		close(pipe_fd[1]);
 		if (proc->prev_pipe_fd != -1)
 			close(proc->prev_pipe_fd);
+		dup2(pipe_fd[0], 0);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
 		waitpid(pid, NULL, 0);
 	}
 }

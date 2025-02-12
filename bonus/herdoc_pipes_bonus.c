@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/11 10:33:40 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/12 16:03:10 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:58:20 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	setup_here_doc(t_process *proc, int *pipe_fd, char **av)
 	proc->prev_pipe_fd = pipe_fd[0];
 }
 
-void open_infile(char *infile)
+void open_infile(char *infile, t_process *proc)
 {
 	int in_fd;
 
@@ -56,6 +56,7 @@ void open_infile(char *infile)
 		ft_error("open failed");
 	if (dup2(in_fd, 0) == -1)
 		ft_error("dup2 input failed");
+	proc->prev_pipe_fd = in_fd;
 	close(in_fd);
 }
 
@@ -68,6 +69,6 @@ void	handle_here_doc_and_pipes(int ac, char **av, char **envp)
 	if (proc.here_doc)
 		setup_here_doc(&proc, pipe_fd, av);
 	else
-		open_infile(av[1]);
+		open_infile(av[1], &proc);
 	create_pipes_and_execute(&proc);
 }
