@@ -1,3 +1,0 @@
-Hello, this is a test.
-This line is also part of the test.
-Let's see how it works.

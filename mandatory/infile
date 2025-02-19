@@ -1,8 +1,0 @@
-inva:lid:cmd:
-Read from /dev/stdin (terminal input).
-
-Use grep to filter lines containing "pattern".
-
-Pass the filtered lines to wc -l to count the number of lines.
-
-Write the result to /dev/stdout.

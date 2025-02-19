@@ -6,11 +6,17 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 03:14:20 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/01 15:41:31 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/17 13:28:40 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../mandatory/pipex.h"
+#include "pipex.h"
+
+void	ft_error(const char *msg)
+{
+	perror(msg);
+	exit(1);
+}
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
@@ -28,9 +34,9 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
-int	ft_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
-	int	len;
+	size_t	len;
 
 	len = 0;
 	while (s[len] != '\0')
@@ -42,7 +48,7 @@ char	*ft_strdup(const char *s)
 {
 	int		i;
 	char	*str;
-	int		len;
+	size_t	len;
 
 	i = 0;
 	len = ft_strlen(s);

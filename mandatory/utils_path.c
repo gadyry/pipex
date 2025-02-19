@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 23:40:28 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/10 11:16:55 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/17 16:27:28 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	open_file(char *av, int key)
 
 	if (key)
 	{
-		fd = open(av, O_RDONLY);
+		fd = open(av, O_RDONLY, 0777);
 		if (fd == -1)
 		{
 			perror("Error opening infile");
@@ -51,59 +51,57 @@ int	open_file(char *av, int key)
 
 char	*get_env(char **envp)
 {
-	char	*env;
-	int		i;
+	int	i;
 
-	if (!envp)
-		return (NULL);
 	i = 0;
 	while (envp[i])
 	{
 		if (!ft_strncmp(envp[i], "PATH=", 5))
-		{
-			env = ft_strdup(envp[i] + 5);
-			if (!env)
-				ft_error("ft_strdup failed");
-			return (env);
-		}
+			return (ft_strdup(envp[i] + 5));
 		i++;
 	}
 	return (NULL);
 }
 
-char	*get_full_path(char **paths, char **cmd_args)
+char	*get_full_path(char **paths, char *cmd)
 {
 	int		i;
 	char	*temp;
 	char	*full_path;
 
-	if (!paths || !cmd_args || !cmd_args[0])
+	if (!paths || !cmd)
 		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
 		temp = ft_strjoin(paths[i], "/");
 		if (!temp)
-			return (free_matrice(paths), NULL);
-		full_path = ft_strjoin(temp, cmd_args[0]);
+			return (NULL);
+		full_path = ft_strjoin(temp, cmd);
 		free(temp);
 		if (!full_path)
-			return (free_matrice(paths), NULL);
+			return (NULL);
 		if (access(full_path, X_OK) == 0)
-			return (free_matrice(paths), full_path);
+			return (full_path);
 		free(full_path);
 	}
-	return (free_matrice(paths), NULL);
+	return (NULL);
 }
 
 char	*get_cmd_path(char **cmd_args, char **envp)
 {
 	char	*path_env;
-	char	*full_path;
 	char	**paths;
+	char	*full_path;
 
 	if (!cmd_args || !cmd_args[0])
 		return (NULL);
+	if (!ft_strncmp(cmd_args[0], "./", 2) || !ft_strncmp(cmd_args[0], "/", 1))
+	{
+		if (access(cmd_args[0], X_OK) == 0)
+			return (cmd_args[0]);
+		return (NULL);
+	}
 	path_env = get_env(envp);
 	if (!path_env)
 		return (NULL);
@@ -111,6 +109,6 @@ char	*get_cmd_path(char **cmd_args, char **envp)
 	free(path_env);
 	if (!paths)
 		return (NULL);
-	full_path = get_full_path(paths, cmd_args);
-	return (full_path);
+	full_path = get_full_path(paths, cmd_args[0]);
+	return (free_matrice(paths), full_path);
 }

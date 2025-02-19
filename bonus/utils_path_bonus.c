@@ -6,7 +6,7 @@
 /*   By: ael-gady <ael-gady@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 14:51:37 by ael-gady          #+#    #+#             */
-/*   Updated: 2025/02/10 21:10:15 by ael-gady         ###   ########.fr       */
+/*   Updated: 2025/02/17 18:39:58 by ael-gady         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,14 @@ void	free_matrice(char **free_me)
 {
 	int	i;
 
-	i = -1;
-	while (free_me[++i])
+	if (!free_me)
+		return ;
+	i = 0;
+	while (free_me[i])
+	{
 		free(free_me[i]);
+		i++;
+	}
 	free(free_me);
 }
 
@@ -36,41 +41,45 @@ char	*get_env(char **envp)
 	return (NULL);
 }
 
-char	*get_full_path(char **paths, char **cmd_args)
+char	*get_full_path(char **paths, char *cmd)
 {
 	int		i;
 	char	*temp;
 	char	*full_path;
 
-	if (!paths || !cmd_args || !cmd_args[0])
+	if (!paths || !cmd)
 		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
 		temp = ft_strjoin(paths[i], "/");
 		if (!temp)
-			return (free_matrice(paths), NULL);
-		full_path = ft_strjoin(temp, cmd_args[0]);
+			return (NULL);
+		full_path = ft_strjoin(temp, cmd);
 		free(temp);
 		if (!full_path)
-			return (free_matrice(paths), NULL);
+			return (NULL);
 		if (access(full_path, X_OK) == 0)
-			return (free_matrice(paths), full_path);
+			return (full_path);
 		free(full_path);
 	}
-	return (free_matrice(paths), NULL);
+	return (NULL);
 }
 
 char	*get_cmd_path(char **cmd_args, char **envp)
 {
-	char	*pathname;
 	char	*path_env;
 	char	**paths;
+	char	*full_path;
 
 	if (!cmd_args || !cmd_args[0])
 		return (NULL);
 	if (!ft_strncmp(cmd_args[0], "./", 2) || !ft_strncmp(cmd_args[0], "/", 1))
-		return (cmd_args[0]);
+	{
+		if (access(cmd_args[0], X_OK) == 0)
+			return (cmd_args[0]);
+		return (NULL);
+	}
 	path_env = get_env(envp);
 	if (!path_env)
 		return (NULL);
@@ -78,20 +87,19 @@ char	*get_cmd_path(char **cmd_args, char **envp)
 	free(path_env);
 	if (!paths)
 		return (NULL);
-	pathname = get_full_path(cmd_args, paths);
-	free(paths);
-	return (pathname);
+	full_path = get_full_path(paths, cmd_args[0]);
+	return (free_matrice(paths), full_path);
 }
 
-void	execute_cmd(char *cmd_, char **envp)//execute_cmd(proc->av[indice], proc->envp);
+void	execute_cmd(char *cmd_, char **envp, int key)
 {
 	char	*pathname;
 	char	**cmd_args;
 
-	cmd_args = ft_split(cmd_, ' ');// handle tr ' ' '\n'!
+	cmd_args = ft_split(cmd_, ' ');
 	if (!cmd_args)
 		ft_error("ft_split failed");
-	pathname = get_cmd_path(cmd_args, envp);// /bin/ls ...
+	pathname = get_cmd_path(cmd_args, envp);
 	if (!pathname)
 	{
 		free_matrice(cmd_args);
@@ -103,6 +111,8 @@ void	execute_cmd(char *cmd_, char **envp)//execute_cmd(proc->av[indice], proc->e
 		if (pathname != cmd_args[0])
 			free(pathname);
 		free_matrice(cmd_args);
+		if (key == 1)
+			unlink("/tmp/.hg");
 		exit(1);
 	}
 }
